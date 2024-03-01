@@ -23,13 +23,13 @@ import pandas as pd
 #     post=5432
 # )
 
-connection = pg.connect("postgres://username:password@host/databasename")
+connection = pg.connect("postgr953918.us-east-2.aws.neon.tech/neondb")
 
 # Crear un cursor para ejecutar las consultas SQL
 cursor = connection.cursor()
 
 # Ejecutar una consulta
-#cursor.execute(" SELECT * FROM projects ")
+#cursor.execute(" SELECT * FROM users ")
 #projects = cursor.fetchall()
 
 #df_projects = pd.DataFrame(projects)
@@ -48,7 +48,7 @@ cursor = connection.cursor()
 #df_users = pd.DataFrame(users)
 #print(df_users)
 
-cursor.execute(" SELECT born_date, COUNT(*) FROM users GROUP BY born_date ")
+cursor.execute(" SELECT COUNT(*) FROM users ")
 users = cursor.fetchall()
 
 df_users = pd.DataFrame(users)
