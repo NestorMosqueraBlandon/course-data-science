@@ -1,6 +1,8 @@
 import psycopg2 as pg
 import pandas as pd
 import numpy as np
+from datetime import datetime
+import random
 
 connection_string = "postgresql://rvehardware:wrQRPy7OVds9@ep-withered-snowflake-a54v41cn.us-east-2.aws.neon.tech/data-science"
 
@@ -19,46 +21,54 @@ CREATE TABLE air_quality (
 """
 
 query_delete = "DROP TABLE air_quality"
+ciudades = ['Bogotá', 'Medellín', 'Cali', 'Barranquilla', 'Cartagena']
 
-query_insert = """
-INSERT INTO air_quality (id, location, date, pollutant, concentration)
-VALUES
-    (1, 'Ciudad A', '2023-01-01', 'PM10', 25.5),
-    (2, 'Ciudad A', '2023-01-01', 'NO2', 10.2),
-    (3, 'Ciudad B', '2023-01-01', 'PM10', 18.7),
-    (4, 'Ciudad B', '2023-01-01', 'NO2', 8.9),
-    (5, 'Ciudad A', '2023-01-01', 'PM10', 28.3),
-    (6, 'Ciudad A', '2023-01-01', 'NO2', 11.5),
-    (7, 'Ciudad B', '2023-01-01', 'PM10', 20.1),
-    (8, 'Ciudad B', '2023-01-01', 'NO2', 9.8) 
-"""
+# Generación de 100 filas de datos
+for i in range(1, 367):
+    ciudad = random.choice(ciudades)
+    fecha = datetime(2023, random.randint(1, 12), random.randint(1, 28)).strftime('%Y-%m-%d')
+    pollutant = random.choice(['PM10', 'NO2'])
+    concentration = random.uniform(0, 100)
+    
+    # Sentencia SQL para insertar datos
+    query_insert = f"""
+    INSERT INTO air_quality (id, location, date, pollutant, concentration)
+    VALUES
+        ({i}, '{ciudad}', '{fecha}', '{pollutant}', {concentration})
+    """
+    
+    # Ejecutar la sentencia SQL
+    cursor.execute(query_insert)
 
-query_delete_register = "DELETE FROM air_quality WHERE id=4"
-
-query_group = " SELECT * FROM air_quality "
-cursor.execute(query_group)
-
-data = cursor.fetchall()
+# Confirmar la transacción
 #connection.commit()
 
-df = pd.DataFrame(data, columns=["id", "location", "date", "pollutant", "concentration"])
+query_delete_register = "DELETE FROM air_quality"
 
-print(df)
+query_group = " SELECT * FROM air_quality "
+#cursor.execute(query_delete_register)
 
-df_mean = df["concentration"].mean()
-df_dest = df["concentration"].std()
-df_min = df["concentration"].min()
-df_max = df["concentration"].max()
+#data = cursor.fetchall()
+connection.commit()
+
+#df = pd.DataFrame(data, columns=["id", "location", "date", "pollutant", "concentration"])
+
+#print(df)
+
+#df_mean = df["concentration"].mean()
+#df_dest = df["concentration"].std()
+#df_min = df["concentration"].min()
+#df_max = df["concentration"].max()
 
 
-df_group = df.groupby("location")
+#df_group = df.groupby("location")
 
-print(df_group["concentration"].mean())
+#print(df_group["concentration"].mean())
 
-print("Media: ", df_mean)
-print("Desviación Estandar: ", df_dest)
-print("Mínimo: ", df_min)
-print("Maximo: ", df_max)
+#print("Media: ", df_mean)
+#print("Desviación Estandar: ", df_dest)
+#print("Mínimo: ", df_min)
+#print("Maximo: ", df_max)
 
 
 
