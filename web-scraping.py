@@ -1,12 +1,36 @@
-# 
-
-import requests #Librería para hacer peticiones a enlaces o webs o apis
+import requests
 import pandas as pd
 
-url = "https://www.metrocuadrado.com/rest-search/search?realEstateBusinessList=venta&realEstateStatusList=nuevo&from=0&size=50"
+# Definir la URL del endpoint
+url = "https://remax.com.mx/map/FetchMapData"
 
-results = []
+# Parámetros del formulario de datos
+data = {
+    "moneda": "MXN",
+    "locationKeyword": "",
+    "operacion": "1"
+}
 
-response = requests.get(url, headers={ "X-Amz-Cf-Id": "4Zhlppj9RD4YgbZ1yfLpM1Wd81r19oAhPmp9idtnneGkqgHsUdJhRg==" })
+# Lista para almacenar todos los resultados
+all_results = []
 
-print(response)
+# Hacer la solicitud POST
+response = requests.post(url, data=data)
+
+# Verificar si la solicitud fue exitosa (código de estado 200)
+if response.status_code == 200:
+    data = response.json()
+    
+    # Extraer los datos de la propiedad de los resultados y agregarlos a la lista
+    prop_data = data.get("data", {}).get("prop_data", [])
+    all_results.extend(prop_data)
+    print("Datos obtenidos exitosamente.")
+else:
+    print("Error al hacer la solicitud:", response.status_code)
+
+# Convertir la lista de resultados en un DataFrame de pandas
+df = pd.DataFrame(all_results)
+
+# Guardar los datos en un archivo Excel
+df.to_excel("resultados_propiedades_remax.xlsx", index=False)
+print("Datos guardados exitosamente en 'resultados_propiedades_remax.xlsx'")

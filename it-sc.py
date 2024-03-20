@@ -8,7 +8,7 @@ params = {"json": "true"}
 # Lista para almacenar todos los resultados
 all_results = []
 
-# Hacer la solicitud GET para las primeras 10 páginas
+# Hacer la solicitud GET para las primeras 16 páginas
 for page_number in range(1, 16):
     if page_number > 1:
         url = base_url + "pagina_" + str(page_number)
